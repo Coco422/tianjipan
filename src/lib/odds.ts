@@ -9,6 +9,8 @@ export interface OptionOdds {
 
 export interface MarketOdds {
   totalPool: number;
+  rakeAmount: number;
+  distributable: number;
   options: OptionOdds[];
 }
 
@@ -24,9 +26,12 @@ interface OptionForOdds {
 
 export function calculateOdds(
   options: OptionForOdds[],
-  bets: BetForOdds[]
+  bets: BetForOdds[],
+  rakePercent: number = 5
 ): MarketOdds {
   const totalPool = bets.reduce((sum, b) => sum + b.amount, 0);
+  const rakeAmount = Math.floor((totalPool * rakePercent) / 100);
+  const distributable = totalPool - rakeAmount;
 
   const optionData = options.map((opt) => {
     const betsOnOption = bets.filter((b) => b.optionId === opt.id);
@@ -36,11 +41,11 @@ export function calculateOdds(
       optionId: opt.id,
       label: opt.label,
       totalWagered: winnerPool,
-      impliedOdds: winnerPool > 0 ? totalPool / winnerPool : 0,
+      impliedOdds: winnerPool > 0 ? distributable / winnerPool : 0,
       impliedProb: totalPool > 0 ? (winnerPool / totalPool) * 100 : 0,
       bettorCount: betsOnOption.length,
     };
   });
 
-  return { totalPool, options: optionData };
+  return { totalPool, rakeAmount, distributable, options: optionData };
 }

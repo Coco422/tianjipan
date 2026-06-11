@@ -11,9 +11,18 @@ enum MarketType {
 }
 
 enum MarketStatus {
+  PENDING_REVIEW
   OPEN
   CLOSED
+  DISPUTED
   SETTLED
+  CANCELLED
+}
+
+enum DisputeStatus {
+  OPEN
+  PASSED
+  REJECTED
   CANCELLED
 }
 
@@ -38,6 +47,8 @@ model User {
 
   bets           Bet[]
   createdMarkets Market[] @relation("MarketCreator")
+  filedDisputes  Dispute[]     @relation("FiledDisputes")
+  disputeVotes   DisputeVote[] @relation("DisputeVotes")
 
   @@map("users")
 }
@@ -47,7 +58,11 @@ model Market {
   title       String
   description String?
   type        MarketType
-  status      MarketStatus  @default(OPEN)
+  status      MarketStatus  @default(PENDING_REVIEW)
+  rakePercent Int           @default(5) // 庄家抽水百分比
+  houseRevenue Int          @default(0) // 该盘口累计抽水金额
+  reviewNote  String?       // 审核备注
+  reviewedAt  DateTime?     // 审核时间
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   closedAt    DateTime?
@@ -56,10 +71,26 @@ model Market {
   creatorId String
   creator   User   @relation("MarketCreator", fields: [creatorId], references: [id])
 
-  options MarketOption[]
-  bets    Bet[]
+  options  MarketOption[]
+  bets     Bet[]
+  disputes Dispute[]
 
   @@map("markets")
+}
+
+// 系统配置（单行表）
+model SystemConfig {
+  id                String   @id @default(cuid())
+  defaultRake       Int      @default(5)   // 默认抽水率 %
+  houseBalance      Int      @default(0)   // 庄家金库总余额
+  disputeDeposit    Int      @default(10)  // 发起申诉费
+  secondDeposit     Int      @default(5)   // 附议费
+  disputeThreshold  Float    @default(0.3) // 30% 投注者附议即撤市
+  disputeMinVotes   Int      @default(3)   // 最低附议人数
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("system_config")
 }
 
 model MarketOption {
@@ -94,4 +125,35 @@ model Bet {
 
   @@unique([userId, marketId])
   @@map("bets")
+}
+
+model Dispute {
+  id         String        @id @default(cuid())
+  reason     String
+  status     DisputeStatus @default(OPEN)
+  createdAt  DateTime      @default(now())
+  resolvedAt DateTime?
+
+  marketId  String
+  market    Market @relation(fields: [marketId], references: [id])
+  filedById String
+  filedBy   User   @relation("FiledDisputes", fields: [filedById], references: [id])
+
+  votes DisputeVote[]
+
+  @@map("disputes")
+}
+
+model DisputeVote {
+  id        String   @id @default(cuid())
+  amount    Int      // 发起人 10，附议人 5
+  createdAt DateTime @default(now())
+
+  disputeId String
+  dispute   Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation("DisputeVotes", fields: [userId], references: [id])
+
+  @@unique([disputeId, userId])
+  @@map("dispute_votes")
 }

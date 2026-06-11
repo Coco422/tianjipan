@@ -39,7 +39,7 @@ export default async function HomePage() {
       ) : (
         <div className="grid gap-4">
           {markets.map((market) => {
-            const odds = calculateOdds(market.options, market.bets);
+            const odds = calculateOdds(market.options, market.bets, market.rakePercent);
             const statusLabel =
               market.status === MarketStatus.OPEN ? "◉ 下注中" : "◎ 待结算";
             const statusColor =

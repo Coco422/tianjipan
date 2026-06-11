@@ -22,6 +22,13 @@ export async function settleMarket(
     .filter((b) => b.optionId === winningOptionId)
     .reduce((sum, b) => sum + b.amount, 0);
 
+  if (winnerPool === 0) throw new Error("无人投注该选项，无法结算");
+
+  // 抽水计算
+  const rakePercent = market.rakePercent;
+  const rake = Math.floor((totalPool * rakePercent) / 100);
+  const distributable = totalPool - rake;
+
   await prisma.$transaction(async (tx) => {
     await tx.marketOption.update({
       where: { id: winningOptionId },
@@ -30,7 +37,7 @@ export async function settleMarket(
 
     for (const bet of market.bets) {
       if (bet.optionId === winningOptionId && winnerPool > 0) {
-        const payout = Math.floor((bet.amount * totalPool) / winnerPool);
+        const payout = Math.floor((bet.amount * distributable) / winnerPool);
         await tx.user.update({
           where: { id: bet.userId },
           data: { balance: { increment: payout } },
@@ -47,10 +54,28 @@ export async function settleMarket(
       }
     }
 
+    // 记录抽水收入
     await tx.market.update({
       where: { id: marketId },
-      data: { status: MarketStatus.SETTLED, settledAt: new Date() },
+      data: {
+        status: MarketStatus.SETTLED,
+        settledAt: new Date(),
+        houseRevenue: rake,
+      },
     });
+
+    // 更新系统金库
+    const config = await tx.systemConfig.findFirst();
+    if (config) {
+      await tx.systemConfig.update({
+        where: { id: config.id },
+        data: { houseBalance: { increment: rake } },
+      });
+    } else {
+      await tx.systemConfig.create({
+        data: { houseBalance: rake },
+      });
+    }
   });
 }
 

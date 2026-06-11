@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { MarketStatus, MarketType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { autoReviewMarket } from "./review";
 
 const createMarketSchema = z.object({
   title: z.string().min(2, "标题太短").max(200, "标题太长"),
@@ -18,8 +19,8 @@ const createMarketSchema = z.object({
 
 export async function createMarket(formData: FormData) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
-    return { error: "仅开盘长老可创建盘口" };
+  if (!session?.user) {
+    return { error: "请先登录" };
   }
 
   const rawOptions = formData.getAll("options") as string[];
@@ -36,16 +37,22 @@ export async function createMarket(formData: FormData) {
 
   const { title, description, type, options } = parsed.data;
 
-  await prisma.market.create({
+  const newMarket = await prisma.market.create({
     data: {
       title,
       description,
       type: type as MarketType,
+      status: MarketStatus.PENDING_REVIEW,
       creatorId: session.user.id,
       options: {
         create: options.map((label, i) => ({ label, sortOrder: i })),
       },
     },
+  });
+
+  // 异步触发 LLM 审核（不阻塞返回）
+  autoReviewMarket(newMarket.id).catch((err) => {
+    console.error("[market] auto review failed:", err);
   });
 
   revalidatePath("/");
