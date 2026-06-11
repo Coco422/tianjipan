@@ -27,6 +27,19 @@ export default async function LeaderboardPage() {
   const rankStyles = ["rank-gold", "rank-silver", "rank-bronze"];
   const rankLabels = ["壹", "贰", "叁"];
 
+  // 数字转繁体中文
+  const cnDigits = ["零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"];
+  function toCnNum(n: number): string {
+    if (n <= 10) return cnDigits[n] ?? String(n);
+    if (n < 20) return "拾" + (n % 10 === 0 ? "" : cnDigits[n % 10]);
+    if (n < 100) {
+      const tens = Math.floor(n / 10);
+      const ones = n % 10;
+      return cnDigits[tens] + "拾" + (ones === 0 ? "" : cnDigits[ones]);
+    }
+    return String(n); // fallback
+  }
+
   return (
     <div>
       <div className="text-center mb-8">
@@ -53,7 +66,7 @@ export default async function LeaderboardPage() {
               <div
                 className={`font-brush text-2xl w-10 text-center ${rankClass}`}
               >
-                {i < 3 ? rankLabels[i] : i + 1}
+                {i < 3 ? rankLabels[i] : toCnNum(i + 1)}
               </div>
               <div className="flex-1">
                 <div className="text-sm font-bold text-ink-dark">

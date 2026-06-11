@@ -31,9 +31,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      // 登录时或每次请求都刷新余额
+      const userId = user?.id || token.id;
+      if (userId) {
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id! },
+          where: { id: userId as string },
           select: { id: true, nickname: true, role: true, balance: true },
         });
         if (dbUser) {
