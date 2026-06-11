@@ -2,9 +2,11 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { calculateOdds } from "@/lib/odds";
-import { MarketStatus } from "@prisma/client";
+import { MarketStatus, DisputeStatus } from "@prisma/client";
 import BetForm from "@/components/market/BetForm";
 import SettlementPanel from "@/components/market/SettlementPanel";
+import ReviewPanel from "@/components/market/ReviewPanel";
+import DisputeSection from "@/components/market/DisputeSection";
 
 export default async function MarketDetailPage({
   params,
@@ -21,6 +23,16 @@ export default async function MarketDetailPage({
       options: { orderBy: { sortOrder: "asc" } },
       bets: { include: { user: { select: { nickname: true } } } },
       creator: { select: { id: true, nickname: true } },
+      disputes: {
+        where: { status: DisputeStatus.OPEN },
+        include: {
+          filedBy: { select: { id: true, nickname: true } },
+          votes: {
+            include: { user: { select: { id: true, nickname: true } } },
+            orderBy: { createdAt: "asc" },
+          },
+        },
+      },
     },
   });
 
@@ -32,15 +44,26 @@ export default async function MarketDetailPage({
     );
   }
 
-  const odds = calculateOdds(market.options, market.bets);
+  const odds = calculateOdds(market.options, market.bets, market.rakePercent);
   const userBet = market.bets.find((b) => b.userId === session.user.id);
   const isAdmin = session.user.role === "ADMIN";
 
   const statusLabels: Record<MarketStatus, string> = {
+    PENDING_REVIEW: "⊙ 天机审核中",
     OPEN: "◉ 下注中",
     CLOSED: "◎ 待结算",
+    DISPUTED: "⚑ 申诉中",
     SETTLED: "● 已结算",
     CANCELLED: "○ 已取消",
+  };
+
+  const statusColors: Record<MarketStatus, string> = {
+    PENDING_REVIEW: "text-mist-blue",
+    OPEN: "text-jade-green",
+    CLOSED: "text-gold-accent",
+    DISPUTED: "text-vermillion",
+    SETTLED: "text-ink-light",
+    CANCELLED: "text-ink-light",
   };
 
   const winnerOption = market.options.find((o) => o.isWinner);
@@ -52,13 +75,7 @@ export default async function MarketDetailPage({
         <div className="flex items-start justify-between mb-3">
           <h1 className="font-brush text-2xl text-ink-black">{market.title}</h1>
           <span
-            className={`text-xs ${
-              market.status === MarketStatus.OPEN
-                ? "text-jade-green"
-                : market.status === MarketStatus.SETTLED
-                  ? "text-ink-light"
-                  : "text-gold-accent"
-            }`}
+            className={`text-xs ${statusColors[market.status]}`}
           >
             {statusLabels[market.status]}
           </span>
@@ -83,6 +100,11 @@ export default async function MarketDetailPage({
         <div className="text-center mb-4">
           <span className="text-xs text-ink-medium">总彩池</span>
           <div className="spirit-stone text-xl">{odds.totalPool}</div>
+          {odds.rakeAmount > 0 && (
+            <p className="text-xs text-ink-light mt-1">
+              含 {market.rakePercent}% 手续费 ({odds.rakeAmount} 灵石)
+            </p>
+          )}
         </div>
         <div className="space-y-3">
           {odds.options.map((opt) => {
@@ -147,6 +169,39 @@ export default async function MarketDetailPage({
         </div>
       )}
 
+      {/* Pending Review Notice */}
+      {market.status === MarketStatus.PENDING_REVIEW && (
+        <div className="ink-card p-4 border-l-4 border-mist-blue">
+          <p className="text-mist-blue text-sm font-brush">⊙ 天机审核中</p>
+          <p className="text-ink-light text-xs mt-1">
+            盘口已提交，等待天机审核通过后开放下注
+          </p>
+          {market.reviewNote && (
+            <p className="text-ink-medium text-xs mt-2">
+              审核备注: {market.reviewNote}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Cancelled Review Notice (rejected by LLM or admin) */}
+      {market.status === MarketStatus.CANCELLED && market.reviewNote && (
+        <div className="ink-card p-4 border-l-4 border-vermillion">
+          <p className="text-vermillion text-sm font-brush">✕ 审核未通过</p>
+          <p className="text-ink-medium text-xs mt-2">
+            {market.reviewNote}
+          </p>
+          <p className="text-ink-light text-xs mt-1">
+            如有疑问请联系管理员
+          </p>
+        </div>
+      )}
+
+      {/* Admin: Review Panel for PENDING_REVIEW */}
+      {isAdmin && market.status === MarketStatus.PENDING_REVIEW && (
+        <ReviewPanel marketId={market.id} />
+      )}
+
       {/* Bet Form */}
       {market.status === MarketStatus.OPEN && !userBet && (
         <BetForm
@@ -178,6 +233,16 @@ export default async function MarketDetailPage({
           options={market.options.map((o) => ({ id: o.id, label: o.label }))}
         />
       )}
+
+      {/* Dispute Section */}
+      <DisputeSection
+        marketId={market.id}
+        marketStatus={market.status}
+        disputes={market.disputes}
+        userBet={userBet ? { id: userBet.id } : null}
+        userId={session.user.id}
+        isAdmin={isAdmin}
+      />
 
       {/* Settled Result */}
       {market.status === MarketStatus.SETTLED && winnerOption && (

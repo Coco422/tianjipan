@@ -19,8 +19,10 @@ export default async function MarketsPage() {
   });
 
   const statusMap: Record<MarketStatus, { label: string; color: string }> = {
+    PENDING_REVIEW: { label: "⊙ 审核中", color: "text-mist-blue" },
     OPEN: { label: "◉ 下注中", color: "text-jade-green" },
     CLOSED: { label: "◎ 待结算", color: "text-gold-accent" },
+    DISPUTED: { label: "⚑ 申诉中", color: "text-vermillion" },
     SETTLED: { label: "● 已结算", color: "text-ink-light" },
     CANCELLED: { label: "○ 已取消", color: "text-ink-light" },
   };
@@ -30,7 +32,7 @@ export default async function MarketsPage() {
       <h1 className="font-brush text-3xl text-ink-black mb-6">☰ 所有盘口</h1>
       <div className="grid gap-4">
         {markets.map((market) => {
-          const odds = calculateOdds(market.options, market.bets);
+          const odds = calculateOdds(market.options, market.bets, market.rakePercent);
           const st = statusMap[market.status];
           return (
             <Link

@@ -85,14 +85,32 @@ export default async function RootLayout({
                       {session.user.balance}
                     </span>
                   </Link>
+                  <Link
+                    href="/markets/create"
+                    className="text-gold-accent hover:text-ink-black no-underline"
+                  >
+                    开盘
+                  </Link>
+                  <Link
+                    href="/markets/my"
+                    className="text-ink-dark hover:text-ink-black no-underline"
+                  >
+                    我的盘口
+                  </Link>
                   {session.user.role === "ADMIN" && (
                     <Link
-                      href="/markets/create"
+                      href="/markets/pending"
                       className="text-gold-accent hover:text-ink-black no-underline"
                     >
-                      开盘
+                      审核
                     </Link>
                   )}
+                  <Link
+                    href="/disputes"
+                    className="text-ink-dark hover:text-ink-black no-underline"
+                  >
+                    申诉
+                  </Link>
                   <form
                     action={async () => {
                       "use server";

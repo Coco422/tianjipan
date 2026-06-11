@@ -51,6 +51,24 @@ async function main() {
     });
     console.log("✓ 示例盘口已创建");
   }
+
+  // Ensure SystemConfig exists
+  const config = await prisma.systemConfig.findFirst();
+  if (!config) {
+    await prisma.systemConfig.create({
+      data: {
+        defaultRake: 5,
+        houseBalance: 0,
+        disputeDeposit: 10,
+        secondDeposit: 5,
+        disputeThreshold: 0.3,
+        disputeMinVotes: 3,
+      },
+    });
+    console.log("✓ 系统配置已创建（默认抽水 5%，申诉费 10/5）");
+  } else {
+    console.log("⊙ 系统配置已存在");
+  }
 }
 
 main()
