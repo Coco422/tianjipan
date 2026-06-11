@@ -1,65 +1,98 @@
-import Image from "next/image";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { MarketStatus } from "@prisma/client";
+import { calculateOdds } from "@/lib/odds";
 
-export default function Home() {
+export default async function HomePage() {
+  const markets = await prisma.market.findMany({
+    where: {
+      status: { in: [MarketStatus.OPEN, MarketStatus.CLOSED] },
+    },
+    include: {
+      options: true,
+      bets: true,
+      creator: { select: { nickname: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div>
+      <div className="text-center mb-10">
+        <h1 className="font-brush text-4xl text-ink-black mb-2">
+          ☰ 天机盘
+        </h1>
+        <p className="text-ink-medium text-sm">
+          诸位道友，今日天机已现，请下注
+        </p>
+        <div className="ink-divider mt-4">━━━ ✦ ━━━</div>
+      </div>
+
+      {markets.length === 0 ? (
+        <div className="ink-card p-12 text-center">
+          <p className="text-ink-light text-lg">暂无盘口</p>
+          <p className="text-ink-light text-sm mt-2">
+            等待开盘长老揭示天机...
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      ) : (
+        <div className="grid gap-4">
+          {markets.map((market) => {
+            const odds = calculateOdds(market.options, market.bets);
+            const statusLabel =
+              market.status === MarketStatus.OPEN ? "◉ 下注中" : "◎ 待结算";
+            const statusColor =
+              market.status === MarketStatus.OPEN
+                ? "text-jade-green"
+                : "text-gold-accent";
+
+            return (
+              <Link
+                key={market.id}
+                href={`/markets/${market.id}`}
+                className="ink-card p-5 hover:shadow-lg transition-shadow no-underline text-ink-black block"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h2 className="font-brush text-xl">{market.title}</h2>
+                  <span className={`text-xs ${statusColor}`}>{statusLabel}</span>
+                </div>
+                <div className="flex items-center gap-4 text-xs text-ink-medium">
+                  <span>
+                    彩池{" "}
+                    <span className="spirit-stone">{odds.totalPool}</span>
+                  </span>
+                  <span>{market.bets.length} 人下注</span>
+                  <span>开盘: {market.creator.nickname}</span>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  {odds.options.map((opt) => (
+                    <div
+                      key={opt.optionId}
+                      className="flex-1 bg-rice-paper rounded-sm p-2"
+                    >
+                      <div className="text-xs text-ink-medium mb-1">
+                        {opt.label}
+                      </div>
+                      <div className="odds-bar">
+                        <div
+                          className="odds-bar-fill"
+                          style={{ width: `${opt.impliedProb}%` }}
+                        />
+                      </div>
+                      <div className="text-xs text-ink-light mt-1">
+                        {opt.impliedOdds > 0
+                          ? `${opt.impliedOdds.toFixed(2)}x`
+                          : "--"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Link>
+            );
+          })}
         </div>
-      </main>
+      )}
     </div>
   );
 }

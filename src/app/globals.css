@@ -1,26 +1,181 @@
+@import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700&display=swap");
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink-black: #1a1a1a;
+  --ink-dark: #2d2d2d;
+  --ink-medium: #5c5c5c;
+  --ink-light: #8a8a8a;
+  --rice-paper: #f5f0e8;
+  --rice-paper-2: #ede5d5;
+  --gold-accent: #c9a96e;
+  --vermillion: #c23a2b;
+  --jade-green: #4a7c59;
+  --mist-blue: #7a9bb5;
+  --background: var(--rice-paper);
+  --foreground: var(--ink-black);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-ink-black: var(--ink-black);
+  --color-ink-dark: var(--ink-dark);
+  --color-ink-medium: var(--ink-medium);
+  --color-ink-light: var(--ink-light);
+  --color-rice-paper: var(--rice-paper);
+  --color-rice-paper-2: var(--rice-paper-2);
+  --color-gold-accent: var(--gold-accent);
+  --color-vermillion: var(--vermillion);
+  --color-jade-green: var(--jade-green);
+  --color-mist-blue: var(--mist-blue);
+  --font-brush: "Ma Shan Zheng", cursive;
+  --font-serif: "Noto Serif SC", "Noto Serif", Georgia, serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(122, 155, 181, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(201, 169, 110, 0.04) 0%, transparent 40%),
+    linear-gradient(180deg, var(--rice-paper) 0%, #efe8da 100%);
+  color: var(--ink-black);
+  font-family: "Noto Serif SC", "Noto Serif", Georgia, serif;
+}
+
+/* ── Ink Card ─────────────────────────────────────────── */
+.ink-card {
+  background: var(--rice-paper-2);
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  box-shadow:
+    2px 2px 0 rgba(26, 26, 26, 0.04),
+    4px 4px 0 rgba(26, 26, 26, 0.02);
+  position: relative;
+  border-radius: 2px;
+}
+.ink-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 2px solid transparent;
+  border-image: repeating-linear-gradient(
+      90deg,
+      var(--ink-black) 0px,
+      var(--ink-black) 3px,
+      transparent 3px,
+      transparent 5px
+    )
+    2;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+/* ── Seal Stamp ───────────────────────────────────────── */
+.seal-stamp {
+  color: var(--vermillion);
+  border: 2px solid var(--vermillion);
+  padding: 2px 8px;
+  font-family: "Ma Shan Zheng", cursive;
+  transform: rotate(-3deg);
+  opacity: 0.85;
+  display: inline-block;
+  font-size: 0.875rem;
+}
+
+/* ── Vertical Text ────────────────────────────────────── */
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: "Ma Shan Zheng", cursive;
+  letter-spacing: 0.2em;
+}
+
+/* ── Decorative Divider ───────────────────────────────── */
+.ink-divider {
+  text-align: center;
+  border: none;
+  color: var(--ink-light);
+  letter-spacing: 0.3em;
+  font-size: 0.75rem;
+  user-select: none;
+}
+
+/* ── Spirit Stone Badge ───────────────────────────────── */
+.spirit-stone {
+  color: var(--gold-accent);
+  font-weight: 700;
+}
+.spirit-stone::before {
+  content: "💎 ";
+}
+
+/* ── Ink Button ───────────────────────────────────────── */
+.btn-ink {
+  background: var(--ink-black);
+  color: var(--rice-paper);
+  padding: 0.5rem 1.5rem;
+  font-family: "Noto Serif SC", serif;
+  border: 1px solid var(--ink-black);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-ink:hover {
+  background: var(--ink-dark);
+  box-shadow: 2px 2px 0 rgba(26, 26, 26, 0.15);
+}
+
+.btn-ink-outline {
+  background: transparent;
+  color: var(--ink-black);
+  padding: 0.5rem 1.5rem;
+  font-family: "Noto Serif SC", serif;
+  border: 1px solid var(--ink-medium);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-ink-outline:hover {
+  border-color: var(--ink-black);
+  background: rgba(26, 26, 26, 0.04);
+}
+
+/* ── Ink Input ────────────────────────────────────────── */
+.ink-input {
+  background: var(--rice-paper);
+  border: 1px solid rgba(26, 26, 26, 0.2);
+  border-radius: 2px;
+  padding: 0.5rem 0.75rem;
+  font-family: "Noto Serif SC", serif;
+  color: var(--ink-black);
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+.ink-input:focus {
+  border-color: var(--ink-black);
+}
+
+/* ── Odds Bar ─────────────────────────────────────────── */
+.odds-bar {
+  height: 8px;
+  border-radius: 1px;
+  background: var(--ink-light);
+  overflow: hidden;
+}
+.odds-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-accent), var(--jade-green));
+  transition: width 0.5s ease;
+}
+
+/* ── Leaderboard Top 3 ────────────────────────────────── */
+.rank-gold {
+  color: #b8860b;
+  text-shadow: 0 0 4px rgba(184, 134, 11, 0.3);
+}
+.rank-silver {
+  color: #708090;
+}
+.rank-bronze {
+  color: #a0522d;
 }

@@ -1,0 +1,97 @@
+// ─── Enums ──────────────────────────────────────────────
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum MarketType {
+  BINARY
+  MULTI
+}
+
+enum MarketStatus {
+  OPEN
+  CLOSED
+  SETTLED
+  CANCELLED
+}
+
+// ─── Models ─────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nickname  String   @unique
+  password  String
+  role      UserRole @default(USER)
+  balance   Int      @default(1000)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bets           Bet[]
+  createdMarkets Market[] @relation("MarketCreator")
+
+  @@map("users")
+}
+
+model Market {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  type        MarketType
+  status      MarketStatus  @default(OPEN)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  closedAt    DateTime?
+  settledAt   DateTime?
+
+  creatorId String
+  creator   User   @relation("MarketCreator", fields: [creatorId], references: [id])
+
+  options MarketOption[]
+  bets    Bet[]
+
+  @@map("markets")
+}
+
+model MarketOption {
+  id        String  @id @default(cuid())
+  label     String
+  sortOrder Int     @default(0)
+  isWinner  Boolean @default(false)
+
+  marketId String
+  market   Market @relation(fields: [marketId], references: [id], onDelete: Cascade)
+
+  bets Bet[]
+
+  @@unique([marketId, sortOrder])
+  @@map("market_options")
+}
+
+model Bet {
+  id        String   @id @default(cuid())
+  amount    Int
+  createdAt DateTime @default(now())
+  payout    Int?
+
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+
+  marketId String
+  market   Market @relation(fields: [marketId], references: [id])
+
+  optionId String
+  option   MarketOption @relation(fields: [optionId], references: [id])
+
+  @@unique([userId, marketId])
+  @@map("bets")
+}
