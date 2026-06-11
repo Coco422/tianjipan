@@ -72,6 +72,9 @@ export async function reviewMarket(market: MarketForReview): Promise<ReviewResul
         ],
         temperature: 0.1,
         max_tokens: 500,
+        // Qwen3 默认开启 thinking 模式，content 会为空
+        // 关闭后 content 直接输出结果
+        chat_template_kwargs: { enable_thinking: false },
       }),
     });
 
@@ -87,10 +90,11 @@ export async function reviewMarket(market: MarketForReview): Promise<ReviewResul
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content?.trim();
+    // Qwen3 关闭 thinking 后 content 直接输出；开启时可能为 null
+    const content = (data.choices?.[0]?.message?.content || "").trim();
 
     if (!content) {
-      console.error("[review] Empty LLM response");
+      console.error("[review] Empty LLM response:", JSON.stringify(data).slice(0, 200));
       return {
         approved: false,
         confidence: 0,
