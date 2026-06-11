@@ -1,0 +1,21 @@
+<svg width="1920" height="200" viewBox="0 0 1920 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" role="img" aria-label="水墨远山">
+  <defs>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="white" stop-opacity=".72"/>
+      <stop offset=".52" stop-color="white" stop-opacity=".38"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="inkBlur" x="-2%" y="-18%" width="104%" height="140%">
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+    <mask id="softFade">
+      <rect width="1920" height="200" fill="url(#fade)"/>
+    </mask>
+  </defs>
+  <g mask="url(#softFade)">
+    <path d="M0 143C85 120 155 122 230 88c49-22 92-51 143-41 61 12 80 67 143 66 74-1 94-76 164-76 78 0 105 93 186 90 72-3 91-78 163-82 83-4 110 94 194 92 81-2 111-98 191-99 89-1 122 103 206 98 63-4 94-65 152-68 79-5 116 91 188 84 67-6 92-72 160-79v127H0V143Z" fill="#1a1a1a" fill-opacity=".15" filter="url(#inkBlur)"/>
+    <path d="M0 157c108-16 167-56 239-56 71 0 97 40 159 42 91 3 125-72 205-70 78 2 112 75 188 76 87 1 122-90 207-90 92 0 123 95 212 95 85 0 120-86 209-86 91 0 130 85 216 81 73-3 102-62 171-64 46-1 80 21 114 50v65H0v-43Z" fill="#1a1a1a" fill-opacity=".21"/>
+    <path d="M58 143c85-8 122-39 180-39 49 0 72 28 121 31 70 5 101-48 161-45 52 3 76 45 130 45 68 0 94-72 159-69 62 3 83 70 148 69 63-1 91-68 155-70 71-2 101 75 174 75 75 0 108-76 180-76 58 0 91 51 149 53 61 2 91-48 148-43 41 4 70 33 100 66" stroke="#1a1a1a" stroke-opacity=".3" stroke-width="3" stroke-linecap="round"/>
+    <path d="M202 145c41-10 88-7 132 3M640 153c52-14 108-15 161-2M1168 147c73-18 147-17 218 1M1546 152c50-13 99-12 147 2" stroke="#7a9bb5" stroke-opacity=".15" stroke-width="9" stroke-linecap="round"/>
+  </g>
+</svg>
