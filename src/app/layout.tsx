@@ -3,9 +3,43 @@ import "./globals.css";
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 
+const siteTitle = "天机盘 — 修仙预测市场";
+const siteDescription = "诸位道友，今日天机已现，请下注";
+const metadataBase = new URL(
+  process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000"),
+);
+const ogImage = {
+  url: "/og.png",
+  width: 1200,
+  height: 630,
+  alt: "天机盘 - 诸位道友，请下注",
+};
+
 export const metadata: Metadata = {
-  title: "天机盘 — 修仙预测市场",
-  description: "诸位道友，今日天机已现，请下注",
+  metadataBase,
+  title: siteTitle,
+  description: siteDescription,
+  applicationName: "天机盘",
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    type: "website",
+    locale: "zh_CN",
+    siteName: "天机盘",
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: [ogImage],
+  },
 };
 
 export default async function RootLayout({

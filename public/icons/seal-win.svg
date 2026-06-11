@@ -1,0 +1,14 @@
+<svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="胜字印章">
+  <defs>
+    <filter id="bleed" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency=".075" numOctaves="2" seed="9"/>
+      <feDisplacementMap in="SourceGraphic" scale="1.1"/>
+    </filter>
+  </defs>
+  <path d="M10.5 8.8c14.8-2.6 34.8-2.6 50.3.8 3.6 15.3 3.2 35.7-.7 50.8-15.7 3.3-35 3.4-50 .1-3.4-15.5-3.8-35.8.4-51.7Z" fill="#c23a2b" fill-opacity=".9" filter="url(#bleed)"/>
+  <path d="M16.1 15.4c11.5-1.9 27.3-1.8 40 .4 1.9 12 1.8 27.8-.5 40.6-12.3 1.7-27.4 1.8-39.8.1-2.1-12.1-2.1-28.3.3-41.1Z" stroke="#f5f0e8" stroke-opacity=".82" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#f5f0e8" font-family="'Ma Shan Zheng','STKaiti','Noto Sans CJK SC',serif" font-weight="700">
+    <text x="36" y="46" font-size="36" text-anchor="middle">胜</text>
+  </g>
+  <path d="M13.4 62.2c5.3-1.1 9.6-.8 13.1.7M45 10.6c4.6.2 8.4.8 11.7 1.9" stroke="#f5f0e8" stroke-opacity=".48" stroke-width="2" stroke-linecap="round"/>
+</svg>
