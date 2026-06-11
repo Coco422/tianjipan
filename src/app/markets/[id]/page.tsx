@@ -184,6 +184,19 @@ export default async function MarketDetailPage({
         </div>
       )}
 
+      {/* Cancelled Review Notice (rejected by LLM or admin) */}
+      {market.status === MarketStatus.CANCELLED && market.reviewNote && (
+        <div className="ink-card p-4 border-l-4 border-vermillion">
+          <p className="text-vermillion text-sm font-brush">✕ 审核未通过</p>
+          <p className="text-ink-medium text-xs mt-2">
+            {market.reviewNote}
+          </p>
+          <p className="text-ink-light text-xs mt-1">
+            如有疑问请联系管理员
+          </p>
+        </div>
+      )}
+
       {/* Admin: Review Panel for PENDING_REVIEW */}
       {isAdmin && market.status === MarketStatus.PENDING_REVIEW && (
         <ReviewPanel marketId={market.id} />

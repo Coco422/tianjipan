@@ -57,6 +57,12 @@ export default async function RootLayout({
                   >
                     开盘
                   </Link>
+                  <Link
+                    href="/markets/my"
+                    className="text-ink-dark hover:text-ink-black no-underline"
+                  >
+                    我的盘口
+                  </Link>
                   {session.user.role === "ADMIN" && (
                     <Link
                       href="/markets/pending"
