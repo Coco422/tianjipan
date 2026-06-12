@@ -55,6 +55,11 @@ NEXTAUTH_SECRET="random-32-chars"    # JWT 签名密钥
 NEXTAUTH_URL="http://localhost:3000" # 站点 URL
 ADMIN_SEED_NICKNAME="天机子"         # 管理员道号
 ADMIN_SEED_PASSWORD="admin1234"      # 管理员密码
+
+# LLM 审核 API（OpenAI 兼容格式）
+LLM_API_KEY="your-api-key-here"      # API 密钥
+LLM_API_URL="https://api.openai.com/v1/chat/completions"  # API 端点
+LLM_MODEL="gpt-4o-mini"              # 模型名称
 ```
 
 ## 页面
