@@ -54,15 +54,6 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         {/* ── Header ──────────────────────────────── */}
         <header className="border-b border-ink-black/10 bg-rice-paper/80 backdrop-blur-sm sticky top-0 z-50">
-          {/* 水墨山峦装饰 */}
-          <div className="absolute inset-x-0 top-0 h-20 pointer-events-none opacity-45 overflow-hidden">
-            <img
-              src="/decorations/mountains.svg"
-              alt=""
-              className="w-full h-full object-cover object-bottom"
-              aria-hidden="true"
-            />
-          </div>
           <div className="relative max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 no-underline">
               <span className="font-brush text-2xl text-ink-black tracking-wider">
@@ -150,6 +141,15 @@ export default async function RootLayout({
             </nav>
           </div>
         </header>
+
+        {/* ── 水墨山峦装饰 ─────────────────────────── */}
+        <div className="w-full h-24 overflow-hidden pointer-events-none" aria-hidden="true">
+          <img
+            src="/decorations/mountains.svg"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
 
         {/* ── Main ────────────────────────────────── */}
         <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">

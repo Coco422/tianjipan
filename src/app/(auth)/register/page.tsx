@@ -26,8 +26,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-16">
-      <div className="text-center mb-8">
+    <div className="max-w-sm mx-auto mt-16 relative">
+      {/* 装饰插画 */}
+      <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-64 opacity-25 pointer-events-none" aria-hidden="true">
+        <img src="/illustrations/empty-market.png" alt="" className="w-full h-auto" />
+      </div>
+      <div className="text-center mb-8 relative">
         <h1 className="font-brush text-3xl mb-2">修炼</h1>
         <p className="text-ink-medium text-sm">取得道号，获赠 1000 灵石</p>
       </div>
