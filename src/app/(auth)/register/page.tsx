@@ -26,12 +26,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-16 relative">
-      {/* 装饰插画 */}
-      <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-64 opacity-25 pointer-events-none" aria-hidden="true">
-        <img src="/illustrations/empty-market.png" alt="" className="w-full h-auto" />
+    <div className="max-w-sm mx-auto mt-8 relative">
+      {/* 装饰插画 — 在表单上方独立展示 */}
+      <div className="flex justify-center mb-4 opacity-30 pointer-events-none" aria-hidden="true">
+        <img src="/illustrations/empty-market.png" alt="" className="w-40 h-auto" />
       </div>
-      <div className="text-center mb-8 relative">
+      <div className="text-center mb-8">
         <h1 className="font-brush text-3xl mb-2">修炼</h1>
         <p className="text-ink-medium text-sm">取得道号，获赠 1000 灵石</p>
       </div>
