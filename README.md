@@ -7,11 +7,12 @@
 ## 玩法
 
 - **用户** = 修士，注册即得 1000 灵石
-- **盘口** = 天机盘，Admin 创建竞猜话题
+- **盘口** = 天机盘，人人可开，LLM 自动审核 + Admin 复核
 - **下注** = 压注，选一个方向投入灵石
 - **赔率** = 彩池模式，`payout = amount × totalPool / winnerPool`
 - **结算** = 天道裁决，Admin 宣布胜方，自动分配灵石
 - **排行** = 宗门天榜，按灵石余额排名
+- **庄家抽水** = 每笔盘口结算时抽取固定比例的灵石
 
 ## 技术栈
 
@@ -71,7 +72,10 @@ LLM_MODEL="gpt-4o-mini"              # 模型名称
 | `/register` | 修炼（注册） |
 | `/markets` | 所有盘口 |
 | `/markets/[id]` | 盘口详情 + 下注 |
-| `/markets/create` | 开盘（Admin） |
+| `/markets/create` | 开盘（全民可开，LLM 审核） |
+| `/markets/my` | 我的盘口（审核状态 + 拒绝原因） |
+| `/markets/pending` | 待审核盘口（Admin） |
+| `/disputes` | 申诉列表 |
 | `/leaderboard` | 宗门天榜 |
 | `/profile` | 个人中心 |
 
