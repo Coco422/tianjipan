@@ -71,14 +71,18 @@ body {
 
 /* ── Seal Stamp ───────────────────────────────────────── */
 .seal-stamp {
-  color: var(--vermillion);
-  border: 2px solid var(--vermillion);
-  padding: 2px 8px;
-  font-family: "Ma Shan Zheng", cursive;
+  display: inline-block;
+  width: 1.8em;
+  height: 1.8em;
+  vertical-align: -0.4em;
+  background: url("/icons/seal-win.svg") no-repeat center / contain;
+  /* 隐藏文字，用 SVG 印章替代 */
+  font-size: 0;
+  color: transparent;
+  border: none;
+  padding: 0;
   transform: rotate(-3deg);
   opacity: 0.85;
-  display: inline-block;
-  font-size: 0.875rem;
 }
 
 /* ── Vertical Text ────────────────────────────────────── */
@@ -105,7 +109,13 @@ body {
   font-weight: 700;
 }
 .spirit-stone::before {
-  content: "💎 ";
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  margin-right: 0.2em;
+  background: url("/icons/spirit-stone.svg") no-repeat center / contain;
 }
 
 /* ── Ink Button ───────────────────────────────────────── */

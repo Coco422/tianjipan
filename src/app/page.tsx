@@ -31,6 +31,11 @@ export default async function HomePage() {
 
       {markets.length === 0 ? (
         <div className="ink-card p-12 text-center">
+          <img
+            src="/illustrations/empty-market.png"
+            alt="暂无盘口"
+            className="mx-auto w-48 h-auto opacity-60 mb-4"
+          />
           <p className="text-ink-light text-lg">暂无盘口</p>
           <p className="text-ink-light text-sm mt-2">
             等待开盘长老揭示天机...
