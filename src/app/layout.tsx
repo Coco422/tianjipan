@@ -55,7 +55,7 @@ export default async function RootLayout({
         {/* ── Header ──────────────────────────────── */}
         <header className="border-b border-ink-black/10 bg-rice-paper/80 backdrop-blur-sm sticky top-0 z-50">
           {/* 水墨山峦装饰 */}
-          <div className="absolute inset-x-0 top-0 h-20 pointer-events-none opacity-20 overflow-hidden">
+          <div className="absolute inset-x-0 top-0 h-20 pointer-events-none opacity-45 overflow-hidden">
             <img
               src="/decorations/mountains.svg"
               alt=""
